@@ -34,4 +34,8 @@ for i in hdf.Question.unique():
         except:
             print(f"cannot process {name}")
 
-#print(pd.DataFrame(correlation_results))
+cor_df = pd.DataFrame(correlation_results)
+
+print(cor_df.info())
+
+
