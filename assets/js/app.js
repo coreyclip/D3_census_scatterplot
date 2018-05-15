@@ -3,36 +3,33 @@
 // Students:
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
-var svgWidth = 960;
-var svgHeight = 500;
+let svgWidth = 960;
+let svgHeight = 500;
 
-var margin = {
+let margin = {
   top: 20,
   right: 40,
   bottom: 60,
   left: 100
 };
 
-var width = svgWidth - margin.left - margin.right;
-var height = svgHeight - margin.top - margin.bottom;
+let width = svgWidth - margin.left - margin.right;
+let height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
-var svg = d3.select(".chart")
+let svg = d3.select(".chart")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight)
 
-var chartGroup = svg.append("g")
+let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-
-// depression dataset
 
 
 d3.csv('../data/data.csv', function(err, CensusData){
     if (err) throw err;
 
-    console.log(data)
+    console.log(CensusData)
 
     // Step 1: Parse Data as numbers
     CensusData.forEach(function(data){
@@ -41,12 +38,12 @@ d3.csv('../data/data.csv', function(err, CensusData){
     });
     
     // Step 2: Create Scale Functions
-    let xLinearScale = d3.scaleLinear()
-            .domain(1000, d3.max(CensusData, d => d.medianIncomeAll))
+    let xScale = d3.scaleLinear()
+            .domain([30000, d3.max(CensusData, d => d.medianIncomeAll)])
             .range([0,width])
     
     let yLinearScale = d3.scaleLinear()
-            .domain([0, d3.max(CensusData, d => d.depression)])
+            .domain([10, d3.max(CensusData, d => d.depression)])
             .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -64,16 +61,17 @@ d3.csv('../data/data.csv', function(err, CensusData){
   // Step 5: Create Circles
   // ==============================
   let circlesGroup = chartGroup.selectAll('circle')
-      .data(hairData)
+      .data(CensusData)
       .enter()
       .append("circle")
       .attr("cx", d => xScale(d.medianIncomeAll))
       .attr("cy", d => yLinearScale(d.depression))
       .attr("r", "10")
-      .attr("fill", rgb(128, 128, 0))
+      .attr("fill", "rgb(128, 128, 0)")
       .attr("stroke-width", "2")
-      .attr("stroke", rgb(128, 128, 0))
+      .attr("stroke", "rgb(128, 128, 0)")
       .attr('opacity', '.75')
+      .text(d => d.locationAbbr)
   // Step 6: Initialize tool tip
   // ==============================
   let toolTip = d3.tip()
@@ -88,7 +86,7 @@ d3.csv('../data/data.csv', function(err, CensusData){
 
   // Step 8: Create event listeners to display and hide the tooltip
   // ==============================
-  circlesGroup.on("click", function(d){
+  circlesGroup.on("mouseover", function(d){
     toolTip.show(d)
   })
   .on("mouseout", function(d){
@@ -97,8 +95,8 @@ d3.csv('../data/data.csv', function(err, CensusData){
   // Create axes labels
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left + 40)
-    .attr("x", 0 - (height / 2))
+    .attr("y", 0 - margin.left + 30)
+    .attr("x", 0 - (height / 1.2))
     .attr("dy", "1em")
     .attr("class", "axisText")
     .text("% of Respondents Diagnosed with Depression");
