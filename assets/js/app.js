@@ -16,20 +16,20 @@ let margin = {
 let width = svgWidth - margin.left - margin.right;
 let height = svgHeight - margin.top - margin.bottom;
 
-// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
-let svg = d3.select(".chart")
+// Create an SVG wrapper, append an SVG group that will hold our Chart, and shift the latter by left and top margins.
+let svg = d3.select(".Chart")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight)
 
-let chartGroup = svg.append("g")
+let Chart = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 
-d3.select(".chart").append("div").attr("class", "tooltip").style("opacity", 0);
+d3.select(".Chart").append("div").attr("class", "tooltip").style("opacity", 0);
 
 
-// Now that the chart parameters are set up we move to actually plotting the data
+// Now that the Chart parameters are set up we move to actually plotting the data
 
 d3.csv('../data/data.csv', function(err, CensusData){
     if (err) throw err;
@@ -43,12 +43,12 @@ d3.csv('../data/data.csv', function(err, CensusData){
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d){
-      return (`${d.locationAbbr} </hr> Median Income: ${d.medianIncomeAll}`)
+      return (`${d.stateAbbr} </hr> Median Income: ${d.medianIncomeAll}`)
     });
 
-    // Step 2: Create tooltip in the chart
+    // Step 2: Create tooltip in the Chart
     // ==============================
-    chartGroup.call(toolTip)
+    Chart.call(toolTip)
 
 
     // Step 3: Parse Data as numbers
@@ -99,22 +99,22 @@ d3.csv('../data/data.csv', function(err, CensusData){
   // set the default y-axis
   var defaultAxisLabelY = "% of Respondents with Depression"
   
-    // Step 6: Append Axes to the chart
+    // Step 6: Append Axes to the Chart
   // ==============================
   // Add bottomAxis
-  chartGroup.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+  Chart.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
 
   // Add leftAxis to the left side of the display
-  chartGroup.append("g").call(yAxis);
+  Chart.append("g").call(yAxis);
 
   // Step 7: Create Circles
   // ==============================
-  let circlesGroup = chartGroup.selectAll('circle')
+  let circlesGroup = Chart.selectAll('circle')
       .data(CensusData)
       .enter()
       .append("circle")
-      .attr("cx", d => xScale(d.medianIncomeAll))
-      .attr("cy", d => yScale(d.depression))
+      .attr("cx", d => xScale(d.medianIncome))
+      .attr("cy", d => yScale(d.percentDepressed))
       .attr("r", "10")
       .attr("fill", "rgb(128, 128, 0)")
       .attr("stroke-width", "2")
@@ -132,7 +132,7 @@ d3.csv('../data/data.csv', function(err, CensusData){
     toolTip.hide(d)
   });
   // Create axes labels
-  chartGroup.append("text")
+  Chart.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left + 30)
     .attr("x", 0 - (height / 1.2))
@@ -140,7 +140,7 @@ d3.csv('../data/data.csv', function(err, CensusData){
     .attr("class", "axisText")
     .text("% of Respondents Diagnosed with Depression");
 
-  chartGroup.append("text")
+  Chart.append("text")
     .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
     .attr("class", "axisText")
     .text("Median State Income");  
@@ -151,8 +151,8 @@ d3.csv('../data/data.csv', function(err, CensusData){
     .enter()
     .append('text')
     .text(d => d.stateAbbr)
-    .attr("x", d => xScale(d.medianIncomeAll))
-    .attr("y", d => yScale(d.depression))
+    .attr("x", d => xScale(d.medianIncome))
+    .attr("y", d => yScale(d.percentDepressed))
     .attr("font-size", "12px")
     .attr("text-anchor", "middle")
     .attr("class","abbr")
@@ -167,13 +167,13 @@ d3.csv('../data/data.csv', function(err, CensusData){
 
   // Step 10 add other axis labels
   // create x-axis
-  chart.append("g")
+  Chart.append("g")
   .attr("class", "x-axis")
   .attr("transform", `translate(0,${height})`)
   .call(xAxis);
 
 // create y-axis
-chart.append("g")
+Chart.append("g")
   .attr("class", "y-axis")
   .call(yAxis)
 
@@ -181,32 +181,32 @@ chart.append("g")
 // Append axes titles
 
 // add main x-axis title
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(${width - 40},${height - 5})`)
   .attr("class", "axis-text-main")
   .text("Development Indicators")
 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(15,60 )rotate(270)`)
   .attr("class", "axis-text-main")
   .text("Health Problems")
 
 // add x-axis titles
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(${width / 2},${height + 40})`)
   // This axis label is active by default
   .attr("class", "axis-text-x active")
   .attr("data-axis-name", "percentBelowPoverty")
   .text("In Poverty (%)");
 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(${width / 2},${height + 60})`)
   // This axis label is active by default
   .attr("class", "axis-text-x inactive")
   .attr("data-axis-name", "medianIncome")
   .text("Household Income (Median)");
 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(${width / 2},${height + 80})`)
   // This axis label is active by default
   .attr("class", "axis-text-x inactive")
@@ -215,21 +215,21 @@ chart.append("text")
 
 
 // add y-axis titles 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(-40,${height / 2})rotate(270)`)
   .attr("class", "axis-text-y active")
   .attr("data-axis-name", "smokers")
   .text("Smokes (%)");
 
 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(-60,${height / 2})rotate(270)`)
   .attr("class", "axis-text-y inactive")
   .attr("data-axis-name", "alcoholConsumption")
   .text("Alcohol Consumption (%)");
 
 
-chart.append("text")
+Chart.append("text")
   .attr("transform", `translate(-80,${height / 2})rotate(270)`)
   .attr("class", "axis-text-y inactive")
   .attr("data-axis-name", "physicallyActive")
