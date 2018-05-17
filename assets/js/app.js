@@ -17,7 +17,7 @@ let width = svgWidth - margin.left - margin.right;
 let height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper, append an SVG group that will hold our chartGroup, and shift the latter by left and top margins.
-let svg = d3.select(".graph")
+let svg = d3.select("#graph")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight)
@@ -26,7 +26,6 @@ let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 
-//d3.select(".chartGroup").append("div").attr("class", "tooltip").style("opacity", 0);
 
 
 // Now that the chartGroup parameters are set up we move to actually plotting the data
@@ -35,7 +34,7 @@ d3.csv('data/data.csv', function(err, CensusData){
     if (err) throw err;
 
     //log csv data
-    console.log(CensusData)
+    console.log("raw data: ", CensusData)
 
     //Parse Data as numbers
     CensusData.forEach(function(data){
@@ -52,21 +51,25 @@ d3.csv('data/data.csv', function(err, CensusData){
     // set the domain of the axes
     xScale.domain([d3.min(CensusData, d => d.medianIncome),
                    d3.max(CensusData, d => d.medianIncome)]);
-    yScale.domain([d3.min(CensusData, d => d.medianIncome),
+    yScale.domain([d3.min(CensusData, d => d.percentDepressed),
                    d3.max(CensusData, d => d.percentDepressed)]);
     
     //  define axis functions
     let xAxis = d3.axisBottom(xScale);
     let yAxis = d3.axisLeft(yScale);
-
+      console.log("x axis: ", xAxis);
+      console.log("y axis: ", yAxis);
     
     // Append Axes to the chartGroup
   // ==============================
   // Add bottomAxis
-  chartGroup.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+  chartGroup.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(xAxis);
 
   // Add leftAxis to the left side of the display
-  chartGroup.append("g").call(yAxis);
+  chartGroup.append("g")
+            .call(yAxis);
 
   console.log("ChartGroup: ", chartGroup)
   //  Create Circles
@@ -78,24 +81,9 @@ d3.csv('data/data.csv', function(err, CensusData){
       .attr("cx", d => xScale(d.medianIncome))
       .attr("cy", d => yScale(d.percentDepressed))
       .attr("r", "10")
-      .attr("fill", "rgb(128, 128, 0)")
-      .attr("stroke-width", "2")
-      .attr("stroke", "rgb(128, 128, 0)")
+      .attr("fill", "green")
       .attr('opacity', "0.75")
       
-  // Create axes labels
-  chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left + 30)
-    .attr("x", 0 - (height / 1.2))
-    .attr("dy", "1em")
-    .attr("class", "axisText")
-    .text("% of Respondents Diagnosed with Depression");
-
-  chartGroup.append("text")
-    .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
-    .attr("class", "axisText")
-    .text("Median State Income");  
 
   // Step 9 add state labels
   circlesGroup.selectAll("text")
@@ -121,8 +109,8 @@ d3.csv('data/data.csv', function(err, CensusData){
 
 // Create tooltip in the chartGroup
 // ==============================
-  console.log(chartGroup);
- // chartGroup.call(toolTip);
+  console.log("chartGroup line 112:", chartGroup);
+ chartGroup.call(toolTip);
 
 
   //  Create event listeners to display and hide the tooltip
@@ -141,12 +129,12 @@ d3.csv('data/data.csv', function(err, CensusData){
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Number of Billboard 100 Hits");
+    .text("Median Income");
 
   chartGroup.append("text")
     .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
     .attr("class", "axisText")
-    .text("Hair Metal Band Hair Length (inches)");
+    .text("depression");
 
 });
 
