@@ -25,7 +25,50 @@ let svg = d3.select("#graph")
 let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+// Create axes labels
 
+// y labels
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 40)
+  .attr("x", 0 - (height / 2))
+  .attr("dy", "1em")
+  .attr("class", "axisText")
+  .text("% Depressed");
+
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 20)
+  .attr("x", 0 - (height / 2))
+  .attr("dy", "1em")
+  .attr("class", "axisText")
+  .text("% Blind or Trouble Seeing");
+
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 0)
+  .attr("x", 0 - (height / 2))
+  .attr("dy", "1em")
+  .attr("class", "axisText")
+  .text("% Arthritic");
+
+
+
+  // x labels
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
+  .attr("class", "axisText")
+  .text("Median Income");
+
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 40})`)
+  .attr("class", "axisText")
+  .text("Healthcare Unaffordable");
+
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 60})`)
+  .attr("class", "axisText")
+  .text("Unemployment Rate");
 
 
 // Now that the chartGroup parameters are set up we move to actually plotting the data
@@ -122,19 +165,7 @@ d3.csv('data/data.csv', function(err, CensusData){
     toolTip.hide(d)
   });
 
-    // Create axes labels
-    chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left + 40)
-    .attr("x", 0 - (height / 2))
-    .attr("dy", "1em")
-    .attr("class", "axisText")
-    .text("% Depressed");
-
-  chartGroup.append("text")
-    .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
-    .attr("class", "axisText")
-    .text("Median Income");
+    
 
 });
 
