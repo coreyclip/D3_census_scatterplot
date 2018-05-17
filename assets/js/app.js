@@ -104,7 +104,7 @@ d3.csv('data/data.csv', function(err, CensusData){
   .offset([80, -60])
   .html(function(d){
     console.log(d)
-    return ("test")
+    return (`${d.states}`)
   });
 
 // Create tooltip in the chartGroup
@@ -129,12 +129,12 @@ d3.csv('data/data.csv', function(err, CensusData){
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Median Income");
+    .text("% Depressed");
 
   chartGroup.append("text")
     .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
     .attr("class", "axisText")
-    .text("depression");
+    .text("Median Income");
 
 });
 
