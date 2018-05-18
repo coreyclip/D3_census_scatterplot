@@ -155,6 +155,7 @@ chartGroup.append("text")
   .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
+  .attr("csv-column-name", "percentDepressed")  
   .text("% Depressed");
 
 chartGroup.append("text")
@@ -163,6 +164,7 @@ chartGroup.append("text")
   .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
+  .attr("csv-column-name", "blindness")  
   .text("% Blind or Trouble Seeing");
 
 chartGroup.append("text")
@@ -171,6 +173,7 @@ chartGroup.append("text")
   .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
+  .attr("csv-column-name", "Arthritis")  
   .text("% Arthritic");
 
 
@@ -179,20 +182,27 @@ chartGroup.append("text")
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 15})`)
   .attr("class", "x-axis-text")
+  .attr("csv-column-name", "medianIncome")  
   .text("Median Income");
 
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 35})`)
   .attr("class", "x-axis-text")
+  .attr("csv-column-name", "healthcare_unaffordable")
   .text("Healthcare Unaffordable");
 
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 55})`)
-  .attr("class", "x-axis-text") 
+  .attr("class", "x-axis-text")
+  .attr("csv-column-name", "unemployment")   
   .text("Unemployment Rate");
 
 // on click x-axis
-d3.selectAll(".x-axis-text").on('click')
+d3.selectAll(".x-axis-text").on('click', fucntion(){
+
+    let clickedSelection = d3.select(this);
+    console.log("this has been clicked: ", clickedSelection)
+})
 
 });
 
