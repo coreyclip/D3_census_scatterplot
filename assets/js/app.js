@@ -55,6 +55,7 @@ d3.csv('data/data.csv', function(err, CensusData){
                   - d3.deviation(CensusData, d => d.percentDepressed) / 2,
                    d3.max(CensusData, d => d.percentDepressed)]);
     
+    
     //  define axis functions
     let xAxis = d3.axisBottom(xScale);
     let yAxis = d3.axisLeft(yScale);
@@ -87,16 +88,17 @@ d3.csv('data/data.csv', function(err, CensusData){
       
 
   //  add state labels
-  circlesGroup.selectAll("text")
-    .data(CensusData)
-    .enter()
-    .append('text')
-    .text(d => d.stateAbbr)
-    .attr("x", d => xScale(d.medianIncome))
-    .attr("y", d => yScale(d.percentDepressed))
-    .attr("font-size", "12px")
-    .attr("text-anchor", "middle")
-    .attr("class","abbr")
+  chartGroup.selectAll("text")
+                   .data(CensusData)
+                   .enter()
+                   .append('text')
+                   .attr("x", d => xScale(d.medianIncome))
+                   .attr("y", d => yScale(d.percentDepressed))
+                   .attr("font-size", "12px")
+                   .attr("text-anchor", "middle")
+                   .attr("class","abbr")
+                   .text(d => d.stateAbbr)
+    
 
   // Initialize tool tip
   // ==============================
@@ -198,7 +200,7 @@ chartGroup.append("text")
   .text("Unemployment Rate");
 
 // on click x-axis
-d3.selectAll(".x-axis-text").on('click', fucntion(){
+d3.selectAll(".x-axis-text").on('click', function(){
 
     let clickedSelection = d3.select(this);
     console.log("this has been clicked: ", clickedSelection)
