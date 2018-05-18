@@ -26,6 +26,126 @@ let svg = d3.select("#graph")
 let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+
+// Now that the chartGroup parameters are set up we move to actually plotting the data
+
+d3.csv('data/data.csv', function(err, CensusData){
+    if (err) throw err;
+
+    //log csv data
+    console.log("raw data: ", CensusData)
+
+    //Parse Data as numbers
+    CensusData.forEach(function(data){
+        data.depression = +data.depression;
+        data.medianIncomeAll = +data.medianIncomeAll;
+        //data.states = string(data.states);
+    });
+    
+ 
+    // Create Scale Functions
+    let xScale = d3.scaleLinear().range([0,width]);
+    let yScale = d3.scaleLinear().range([height, 0]);
+
+    // set the domain of the axes
+    xScale.domain([d3.min(CensusData, d => d.medianIncome)
+                   - d3.deviation(CensusData, d => d.medianIncome) / 2,
+                   d3.max(CensusData, d => d.medianIncome)]);
+    yScale.domain([d3.min(CensusData, d => d.percentDepressed)
+                  - d3.deviation(CensusData, d => d.percentDepressed) / 2,
+                   d3.max(CensusData, d => d.percentDepressed)]);
+    
+    //  define axis functions
+    let xAxis = d3.axisBottom(xScale);
+    let yAxis = d3.axisLeft(yScale);
+      //console.log("x axis: ", xAxis);
+      //console.log("y axis: ", yAxis);
+    
+    // Append Axes to the chartGroup
+  // ==============================
+  // Add bottomAxis
+  chartGroup.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(xAxis);
+
+  // Add leftAxis to the left side of the display
+  chartGroup.append("g")
+            .call(yAxis);
+
+  console.log("ChartGroup: ", chartGroup)
+  //  Create Circles
+  // ==============================
+  let circlesGroup = chartGroup.selectAll('circle')
+      .data(CensusData)
+      .enter()
+      .append("circle")
+      .attr("cx", d => xScale(d.medianIncome))
+      .attr("cy", d => yScale(d.percentDepressed))
+      .attr("r", "10")
+      .attr("fill", "green")
+      .attr('opacity', "0.75")
+      
+
+  //  add state labels
+  circlesGroup.selectAll("text")
+    .data(CensusData)
+    .enter()
+    .append('text')
+    .text(d => d.stateAbbr)
+    .attr("x", d => xScale(d.medianIncome))
+    .attr("y", d => yScale(d.percentDepressed))
+    .attr("font-size", "12px")
+    .attr("text-anchor", "middle")
+    .attr("class","abbr")
+
+  // Initialize tool tip
+  // ==============================
+  let toolTip = d3.tip()
+    //.attr("class", "tooltip")
+    .offset([80, -60])
+    .html(function(d){
+    //console.log(d)
+    return (`<div class=panel panel-primary>
+    <div class="panel-heading">${d.states}</div>
+       <div class="panel-body">pop in poverty ${d.povertyPop}% </div>
+          </div>`)
+  });
+
+// Create tooltip in the chartGroup
+// ==============================
+  console.log("chartGroup line 112:", chartGroup);
+ chartGroup.call(toolTip);
+
+
+  //  Create event listeners to display and hide the tooltip
+  // ==============================
+  circlesGroup.on("mouseover", function(d){
+    toolTip.show(d)
+  })
+  .on("mouseout", function(d){
+    toolTip.hide(d)
+  });
+
+  // change the x axis's status from inactive to active when clicked and change all active to inactive
+  function labelChangeX(clickedAxis) {
+    d3.selectAll(".x-axis-text")
+        .filter(".active")
+        .classed("active", false)
+        .classed("inactive", true);
+
+    clickedAxis.classed("inactive", false).classed("active", true);
+}
+
+// change the y axis's status from inactive to active when clicked and change all active to inactive
+function labelChangeY(clickedAxis) {
+  d3.selectAll(".y-axis-text")
+      .filter(".active")
+      .classed("active", false)
+      .classed("inactive", true);
+
+  clickedAxis.classed("inactive", false).classed("active", true);
+}
+
 // Create axes labels
 
 // y labels
@@ -70,126 +190,6 @@ chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 55})`)
   .attr("class", "x-axis-text") 
   .text("Unemployment Rate");
-
-
-// Now that the chartGroup parameters are set up we move to actually plotting the data
-
-d3.csv('data/data.csv', function(err, CensusData){
-    if (err) throw err;
-
-    //log csv data
-    console.log("raw data: ", CensusData)
-
-    //Parse Data as numbers
-    CensusData.forEach(function(data){
-        data.depression = +data.depression;
-        data.medianIncomeAll = +data.medianIncomeAll;
-        //data.states = string(data.states);
-    });
-    
- 
-    // Create Scale Functions
-    let xScale = d3.scaleLinear().range([0,width]);
-    let yScale = d3.scaleLinear().range([height, 0]);
-
-    // set the domain of the axes
-    xScale.domain([d3.min(CensusData, d => d.medianIncome)
-                   - d3.deviation(CensusData, d => d.medianIncome) / 2,
-                   d3.max(CensusData, d => d.medianIncome)]);
-    yScale.domain([d3.min(CensusData, d => d.percentDepressed)
-                  - d3.deviation(CensusData, d => d.percentDepressed) / 2,
-                   d3.max(CensusData, d => d.percentDepressed)]);
-    
-    //  define axis functions
-    let xAxis = d3.axisBottom(xScale);
-    let yAxis = d3.axisLeft(yScale);
-      console.log("x axis: ", xAxis);
-      console.log("y axis: ", yAxis);
-    
-    // Append Axes to the chartGroup
-  // ==============================
-  // Add bottomAxis
-  chartGroup.append("g")
-            .attr("transform", `translate(0, ${height})`)
-            .call(xAxis);
-
-  // Add leftAxis to the left side of the display
-  chartGroup.append("g")
-            .call(yAxis);
-
-  console.log("ChartGroup: ", chartGroup)
-  //  Create Circles
-  // ==============================
-  let circlesGroup = chartGroup.selectAll('circle')
-      .data(CensusData)
-      .enter()
-      .append("circle")
-      .attr("cx", d => xScale(d.medianIncome))
-      .attr("cy", d => yScale(d.percentDepressed))
-      .attr("r", "10")
-      .attr("fill", "green")
-      .attr('opacity', "0.75")
-      
-
-  // Step 9 add state labels
-  circlesGroup.selectAll("text")
-    .data(CensusData)
-    .enter()
-    .append('text')
-    .text(d => d.stateAbbr)
-    .attr("x", d => xScale(d.medianIncome))
-    .attr("y", d => yScale(d.percentDepressed))
-    .attr("font-size", "12px")
-    .attr("text-anchor", "middle")
-    .attr("class","abbr")
-
-  // Initialize tool tip
-  // ==============================
-  let toolTip = d3.tip()
-  .attr("class", "tooltip")
-  .offset([80, -60])
-  .html(function(d){
-    console.log(d)
-    return (`<div class=panel-primary>
-    <div class="panel-heading">${d.states}</div>
-          
-          </div>`)
-  });
-
-// Create tooltip in the chartGroup
-// ==============================
-  console.log("chartGroup line 112:", chartGroup);
- chartGroup.call(toolTip);
-
-
-  //  Create event listeners to display and hide the tooltip
-  // ==============================
-  circlesGroup.on("mouseover", function(d){
-    toolTip.show(d)
-  })
-  .on("mouseout", function(d){
-    toolTip.hide(d)
-  });
-
-  // change the x axis's status from inactive to active when clicked and change all active to inactive
-  function labelChangeX(clickedAxis) {
-    d3.selectAll(".x-axis-text")
-        .filter(".active")
-        .classed("active", false)
-        .classed("inactive", true);
-
-    clickedAxis.classed("inactive", false).classed("active", true);
-}
-
-// change the y axis's status from inactive to active when clicked and change all active to inactive
-function labelChangeY(clickedAxis) {
-  d3.selectAll(".y-axis-text")
-      .filter(".active")
-      .classed("active", false)
-      .classed("inactive", true);
-
-  clickedAxis.classed("inactive", false).classed("active", true);
-}
 
 // on click x-axis
 d3.selectAll(".x-axis-text").on('click')
