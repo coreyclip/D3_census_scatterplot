@@ -4,10 +4,10 @@
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
 let svgWidth = 960;
-let svgHeight = 500;
+let svgHeight = 600;
 
 let margin = {
-  top: 30,
+  top: 40,
   right: 40,
   bottom: 100,
   left: 100
@@ -31,7 +31,7 @@ let chartGroup = svg.append("g")
 chartGroup.append("text")
   .attr("transform", "rotate(-90)")
   .attr("y", 0 - margin.left + 40)
-  .attr("x", 0 - (height / 2))
+  .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
   .text("% Depressed");
@@ -39,7 +39,7 @@ chartGroup.append("text")
 chartGroup.append("text")
   .attr("transform", "rotate(-90)")
   .attr("y", 0 - margin.left + 20)
-  .attr("x", 0 - (height / 2))
+  .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
   .text("% Blind or Trouble Seeing");
@@ -47,7 +47,7 @@ chartGroup.append("text")
 chartGroup.append("text")
   .attr("transform", "rotate(-90)")
   .attr("y", 0 - margin.left + 0)
-  .attr("x", 0 - (height / 2))
+  .attr("x", 0 - (height / 1.5))
   .attr("dy", "1em")
   .attr("class", "y-axis-text")
   .text("% Arthritic");
