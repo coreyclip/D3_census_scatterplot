@@ -21,6 +21,7 @@ let svg = d3.select("#graph")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight)
+  .attr('padding-bottom', 1)
 
 let chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -56,17 +57,17 @@ chartGroup.append("text")
 
   // x labels
 chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 15})`)
   .attr("class", "x-axis-text")
   .text("Median Income");
 
 chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 40})`)
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 35})`)
   .attr("class", "x-axis-text")
   .text("Healthcare Unaffordable");
 
 chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 60})`)
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 55})`)
   .attr("class", "x-axis-text") 
   .text("Unemployment Rate");
 
