@@ -33,7 +33,7 @@ chartGroup.append("text")
   .attr("y", 0 - margin.left + 40)
   .attr("x", 0 - (height / 2))
   .attr("dy", "1em")
-  .attr("class", "axisText")
+  .attr("class", "y-axis-text")
   .text("% Depressed");
 
 chartGroup.append("text")
@@ -41,7 +41,7 @@ chartGroup.append("text")
   .attr("y", 0 - margin.left + 20)
   .attr("x", 0 - (height / 2))
   .attr("dy", "1em")
-  .attr("class", "axisText")
+  .attr("class", "y-axis-text")
   .text("% Blind or Trouble Seeing");
 
 chartGroup.append("text")
@@ -49,7 +49,7 @@ chartGroup.append("text")
   .attr("y", 0 - margin.left + 0)
   .attr("x", 0 - (height / 2))
   .attr("dy", "1em")
-  .attr("class", "axisText")
+  .attr("class", "y-axis-text")
   .text("% Arthritic");
 
 
@@ -57,17 +57,17 @@ chartGroup.append("text")
   // x labels
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
-  .attr("class", "axisText")
+  .attr("class", "x-axis-text")
   .text("Median Income");
 
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 40})`)
-  .attr("class", "axisText")
+  .attr("class", "x-axis-text")
   .text("Healthcare Unaffordable");
 
 chartGroup.append("text")
   .attr("transform", `translate(${width/2}, ${height + margin.top + 60})`)
-  .attr("class", "axisText")
+  .attr("class", "x-axis-text") 
   .text("Unemployment Rate");
 
 
@@ -92,9 +92,11 @@ d3.csv('data/data.csv', function(err, CensusData){
     let yScale = d3.scaleLinear().range([height, 0]);
 
     // set the domain of the axes
-    xScale.domain([d3.min(CensusData, d => d.medianIncome),
+    xScale.domain([d3.min(CensusData, d => d.medianIncome)
+                   - d3.deviation(CensusData, d => d.medianIncome) / 2,
                    d3.max(CensusData, d => d.medianIncome)]);
-    yScale.domain([d3.min(CensusData, d => d.percentDepressed),
+    yScale.domain([d3.min(CensusData, d => d.percentDepressed)
+                  - d3.deviation(CensusData, d => d.percentDepressed) / 2,
                    d3.max(CensusData, d => d.percentDepressed)]);
     
     //  define axis functions
@@ -147,7 +149,10 @@ d3.csv('data/data.csv', function(err, CensusData){
   .offset([80, -60])
   .html(function(d){
     console.log(d)
-    return (`${d.states}`)
+    return (`<div class=panel-primary>
+    <div class="panel-heading">${d.states}</div>
+          
+          </div>`)
   });
 
 // Create tooltip in the chartGroup
@@ -165,7 +170,28 @@ d3.csv('data/data.csv', function(err, CensusData){
     toolTip.hide(d)
   });
 
-    
+  // change the x axis's status from inactive to active when clicked and change all active to inactive
+  function labelChangeX(clickedAxis) {
+    d3.selectAll(".x-axis-text")
+        .filter(".active")
+        .classed("active", false)
+        .classed("inactive", true);
+
+    clickedAxis.classed("inactive", false).classed("active", true);
+}
+
+// change the y axis's status from inactive to active when clicked and change all active to inactive
+function labelChangeY(clickedAxis) {
+  d3.selectAll(".y-axis-text")
+      .filter(".active")
+      .classed("active", false)
+      .classed("inactive", true);
+
+  clickedAxis.classed("inactive", false).classed("active", true);
+}
+
+// on click x-axis
+d3.selectAll(".x-axis-text").on('click')
 
 });
 

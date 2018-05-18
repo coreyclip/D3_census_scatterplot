@@ -35,21 +35,5 @@ body {
 
 
 
-#chart-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      padding-top: 35px;
-      height: 0;
-      overflow: hidden;
-  }
 
-
-#chart-container iframe {
-        position: absolute;
-        top:0;
-        left: 0;
-        width: 150%;
-        height: 150%;
-    }
-    
   
