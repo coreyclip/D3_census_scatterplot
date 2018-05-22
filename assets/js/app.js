@@ -37,9 +37,12 @@ d3.csv('data/data.csv', function(err, CensusData){
 
     //Parse Data as numbers
     CensusData.forEach(function(data){
-        data.depression = +data.depression;
-        data.medianIncomeAll = +data.medianIncomeAll;
-        
+        data.percentDepressed = +data.percentDepressed;
+        data.medianIncome = +data.medianIncome;
+        data.blindness = +data.blindness;
+        data.Arthritis = +data.Arthritis;
+        data.healthcare_unaffordable = +data.healthcare_unaffordable;
+        data.unemployment = +data.unemployment
         //data.states = string(data.states);
     });
     
@@ -220,26 +223,54 @@ d3.selectAll(".x-axis-text").on('click', function(){
 
     // get current y axis
     let CurrentYaxis = d3.selectAll(".y-axis-text").filter(".active").attr('csv-column-name')
-    console.log("current y axis status",)
+    console.log("current y axis status",CurrentYaxis)
 
 
     if (clickedSelection.classed('inactive')){
+        //console.log(CensusData)
+        
+        //console.log('current x scale', xScale)
         xScale.domain([
-                      d3.min(CensusData, d => d.ClickedXaxis)
-                      - d3.deviation(CensusData, d => d.ClickedXaxis) / 2,
-                      d3.max(CensusData, d => d.ClickedXaxis)
+                      d3.min(CensusData, d => d[ClickedXaxis])
+                      - d3.deviation(CensusData, d => d[ClickedXaxis]) / 2,
+                      d3.max(CensusData, d => d[ClickedXaxis])
                       ]);
-                      
-        yScale.domain([
-                      d3.min(CensusData, d => d.percentDepressed)
-                      - d3.deviation(CensusData, d => d.percentDepressed) / 2,
-                      d3.max(CensusData, d => d.percentDepressed)
-                      ]);             
-       
+          
+        //console.log("New X scale", xScale)
+        
+        //  define axis functions
+        let xAxis = d3.axisBottom(xScale);
+          
+        // adjust x-axis
+        svg.select(".x-axis")
+            .transition()
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .call(xAxis)
+        
+            d3.selectAll("circle")
+            .transition()
+            .duration(3000)
+            .ease(d3.easeLinear)
+            .attr("cx", function (d) {
+                console.log('New circle x corr',  d[ClickedXaxis])
+                return xScale(d[ClickedXaxis]);
+                //return d[ClickedXaxis];
+            })
+            
+          
+            // adjust abbreviations
+            d3.selectAll(".abbr")
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .attr("x", function (d) {
+                return xScale(d[ClickedXaxis]);
+            })
 
-    }
+            labelChangeX(clickedSelection);
+    };
 
-    labelChangeX(clickedSelection)
 
 });
 
