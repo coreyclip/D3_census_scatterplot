@@ -250,7 +250,7 @@ d3.selectAll(".x-axis-text").on('click', function(){
         
             d3.selectAll("circle")
             .transition()
-            .duration(3000)
+            .duration(2000)
             .ease(d3.easeLinear)
             .attr("cx", function (d) {
                 console.log('New circle x corr',  d[ClickedXaxis])
@@ -278,17 +278,60 @@ d3.selectAll(".x-axis-text").on('click', function(){
 // on click y-axis
 d3.selectAll(".y-axis-text").on('click', function(){
 
+  
   let clickedSelection = d3.select(this);
-  console.log("this has been clicked: ", clickedSelection)
-  
-  
-  yScale.domain([d3.min(CensusData, d => d.percentDepressed)
-    - d3.deviation(CensusData, d => d.percentDepressed) / 2,
-     d3.max(CensusData, d => d.percentDepressed)]);
+    ClickedYaxis = clickedSelection.attr('csv-column-name')
+    console.log("this has been clicked: ", clickedSelection)
+
+    // get current x axis
+    let CurrentXaxis = d3.selectAll(".x-axis-text").filter(".active").attr('csv-column-name')
+    console.log("current x axis status",CurrentXaxis)
 
 
-  labelChangeY(clickedSelection)
+    if (clickedSelection.classed('inactive')){
+        //console.log(CensusData)
+        
+        //console.log('current x scale', xScale)
+        yScale.domain([
+                      d3.min(CensusData, d => d[ClickedYaxis])
+                      - d3.deviation(CensusData, d => d[ClickedYaxis]) / 2,
+                      d3.max(CensusData, d => d[ClickedYaxis])
+                      ]);
+          
+        //console.log("New X scale", xScale)
+        
+        //  define axis functions
+        let yAxis = d3.axisLeft(yScale);
+          
+        // adjust x-axis
+        svg.select(".y-axis")
+            .transition()
+            .duration(600)
+            .ease(d3.easeLinear)
+            .call(yAxis);
+        
+            d3.selectAll("circle")
+            .transition()
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("cy", function (d) {
+                console.log('New circle x corr',  d[ClickedYaxis])
+                return yScale(d[ClickedYaxis]);
+               
+            })
+            
+          
+            // adjust abbreviations
+            d3.selectAll(".abbr")
+            .transition()
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("y", function (d) {
+                return yScale(d[ClickedYaxis]);
+            })
 
+            labelChangeY(clickedSelection);
+    };
 })
 
 
