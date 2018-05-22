@@ -39,10 +39,11 @@ d3.csv('data/data.csv', function(err, CensusData){
     CensusData.forEach(function(data){
         data.depression = +data.depression;
         data.medianIncomeAll = +data.medianIncomeAll;
+        
         //data.states = string(data.states);
     });
     
- 
+  
     // Create Scale Functions
     let xScale = d3.scaleLinear().range([0,width]);
     let yScale = d3.scaleLinear().range([height, 0]);
@@ -55,7 +56,19 @@ d3.csv('data/data.csv', function(err, CensusData){
                   - d3.deviation(CensusData, d => d.percentDepressed) / 2,
                    d3.max(CensusData, d => d.percentDepressed)]);
     
-    
+  //  add state labels
+  chartGroup.selectAll("text")
+                   .data(CensusData)
+                   .enter()
+                   .append('text')
+                   .attr("x", d => xScale(d.medianIncome))
+                   // adjust y down a bit for better visual
+                   .attr("y", d => yScale(d.percentDepressed) + 2)
+                   .attr("font-size", "12px")
+                   .attr("text-anchor", "middle")
+                   .attr("class","abbr")
+                   .text(d => d.stateAbbr)
+                   
     //  define axis functions
     let xAxis = d3.axisBottom(xScale);
     let yAxis = d3.axisLeft(yScale);
@@ -84,20 +97,10 @@ d3.csv('data/data.csv', function(err, CensusData){
       .attr("cy", d => yScale(d.percentDepressed))
       .attr("r", "10")
       .attr("fill", "green")
-      .attr('opacity', "0.75")
+      .attr('opacity', "0.60")
       
 
-  //  add state labels
-  chartGroup.selectAll("text")
-                   .data(CensusData)
-                   .enter()
-                   .append('text')
-                   .attr("x", d => xScale(d.medianIncome))
-                   .attr("y", d => yScale(d.percentDepressed))
-                   .attr("font-size", "12px")
-                   .attr("text-anchor", "middle")
-                   .attr("class","abbr")
-                   .text(d => d.stateAbbr)
+
     
 
   // Initialize tool tip
@@ -128,6 +131,67 @@ d3.csv('data/data.csv', function(err, CensusData){
     toolTip.hide(d)
   });
 
+  
+
+// Create axes labels
+
+// y labels
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 40)
+  .attr("x", 0 - (height / 1.5))
+  .attr("dy", "1em")
+  .attr("class", "y-axis-text")
+  .classed("active", true)
+  .attr("csv-column-name", "percentDepressed")  
+  .text("% Depressed");
+
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 20)
+  .attr("x", 0 - (height / 1.5))
+  .attr("dy", "1em")
+  .attr("class", "y-axis-text")
+  .classed("inactive", true)
+  .attr("csv-column-name", "blindness")  
+  .text("% Blind or Trouble Seeing");
+
+chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 0)
+  .attr("x", 0 - (height / 1.5))
+  .attr("dy", "1em")
+  .attr("class", "y-axis-text")
+  .classed("inactive", true)
+  .attr("csv-column-name", "Arthritis")  
+  .text("% Arthritic");
+
+
+
+  // x labels
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 15})`)
+  .attr("class", "x-axis-text")
+  .attr("csv-column-name", "medianIncome")
+  .classed("active", true)  
+  .text("Median Income");
+
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 35})`)
+  .attr("class", "x-axis-text")
+  .attr("csv-column-name", "healthcare_unaffordable")
+  .classed("inactive", true)
+  .text("Healthcare Unaffordable");
+
+chartGroup.append("text")
+  .attr("transform", `translate(${width/2}, ${height + margin.top + 55})`)
+  .attr("class", "x-axis-text")
+  .attr("csv-column-name", "unemployment")   
+  .classed("inactive", true)
+  .text("Unemployment Rate");
+
+
+
   // change the x axis's status from inactive to active when clicked and change all active to inactive
   function labelChangeX(clickedAxis) {
     d3.selectAll(".x-axis-text")
@@ -147,64 +211,57 @@ function labelChangeY(clickedAxis) {
 
   clickedAxis.classed("inactive", false).classed("active", true);
 }
-
-// Create axes labels
-
-// y labels
-chartGroup.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left + 40)
-  .attr("x", 0 - (height / 1.5))
-  .attr("dy", "1em")
-  .attr("class", "y-axis-text")
-  .attr("csv-column-name", "percentDepressed")  
-  .text("% Depressed");
-
-chartGroup.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left + 20)
-  .attr("x", 0 - (height / 1.5))
-  .attr("dy", "1em")
-  .attr("class", "y-axis-text")
-  .attr("csv-column-name", "blindness")  
-  .text("% Blind or Trouble Seeing");
-
-chartGroup.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left + 0)
-  .attr("x", 0 - (height / 1.5))
-  .attr("dy", "1em")
-  .attr("class", "y-axis-text")
-  .attr("csv-column-name", "Arthritis")  
-  .text("% Arthritic");
-
-
-
-  // x labels
-chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 15})`)
-  .attr("class", "x-axis-text")
-  .attr("csv-column-name", "medianIncome")  
-  .text("Median Income");
-
-chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 35})`)
-  .attr("class", "x-axis-text")
-  .attr("csv-column-name", "healthcare_unaffordable")
-  .text("Healthcare Unaffordable");
-
-chartGroup.append("text")
-  .attr("transform", `translate(${width/2}, ${height + margin.top + 55})`)
-  .attr("class", "x-axis-text")
-  .attr("csv-column-name", "unemployment")   
-  .text("Unemployment Rate");
-
 // on click x-axis
 d3.selectAll(".x-axis-text").on('click', function(){
 
     let clickedSelection = d3.select(this);
+    ClickedXaxis = clickedSelection.attr('csv-column-name')
     console.log("this has been clicked: ", clickedSelection)
+
+    // get current y axis
+    let CurrentYaxis = d3.selectAll(".y-axis-text").filter(".active").attr('csv-column-name')
+    console.log("current y axis status",)
+
+
+    if (clickedSelection.classed('inactive')){
+        xScale.domain([
+                      d3.min(CensusData, d => d.ClickedXaxis)
+                      - d3.deviation(CensusData, d => d.ClickedXaxis) / 2,
+                      d3.max(CensusData, d => d.ClickedXaxis)
+                      ]);
+                      
+        yScale.domain([
+                      d3.min(CensusData, d => d.percentDepressed)
+                      - d3.deviation(CensusData, d => d.percentDepressed) / 2,
+                      d3.max(CensusData, d => d.percentDepressed)
+                      ]);             
+       
+
+    }
+
+    labelChangeX(clickedSelection)
+
+});
+
+
+// on click y-axis
+d3.selectAll(".y-axis-text").on('click', function(){
+
+  let clickedSelection = d3.select(this);
+  console.log("this has been clicked: ", clickedSelection)
+  
+  
+  yScale.domain([d3.min(CensusData, d => d.percentDepressed)
+    - d3.deviation(CensusData, d => d.percentDepressed) / 2,
+     d3.max(CensusData, d => d.percentDepressed)]);
+
+
+  labelChangeY(clickedSelection)
+
 })
+
+
+
 
 });
 
