@@ -1,9 +1,9 @@
 .iframeContainer {
-  padding: 20px;
-  border: 1px solid #e3e3e3;
-  height:700;
-  width:1200px;
-  
+    padding: 20px;
+    border: 1px solid #e3e3e3;
+    height: 72rem;
+    width: 125rem;
+    margin-bottom: 5%;
 }
 
 /* Sticky Footer rules (https://getbootstrap.com/examples/sticky-footer/) */

@@ -42,10 +42,14 @@
   
   .tooltip {
     position: absolute;
-    text-align: center;
-    font-family: 'Russo One', sans-serif;
+    top: 40px!important;
+    left: 965px!important;
+    text-align: left;
   }
 
+  ul {
+      padding-left: 20px;
+  }
   .abbr {
     color: 'white';
     font-family: 'Russo One', sans-serif;
