@@ -83,7 +83,9 @@ d3.csv('data/data.csv', function(err, CensusData){
   // Add bottomAxis
   chartGroup.append("g")
             .attr("transform", `translate(0, ${height})`)
-            .call(xAxis);
+        .call(xAxis)
+        .selectAll('text').remove()
+   
 
   // Add leftAxis to the left side of the display
   chartGroup.append("g")
