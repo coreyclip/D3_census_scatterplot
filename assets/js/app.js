@@ -1,8 +1,5 @@
 // D3 Scatterplot 
 
-// Students:
-// =========
-// Follow your written instructions and create a scatter plot with D3.js.
 let svgWidth = 960;
 let svgHeight = 600;
 
@@ -42,7 +39,7 @@ d3.csv('data/data.csv', function(err, CensusData){
         data.blindness = +data.blindness;
         data.Arthritis = +data.Arthritis;
         data.healthcare_unaffordable = +data.healthcare_unaffordable;
-        data.unemployment = +data.unemployment
+        data.unemployment = +data.unemployment;
         //data.states = string(data.states);
     });
     
@@ -60,19 +57,21 @@ d3.csv('data/data.csv', function(err, CensusData){
                    d3.max(CensusData, d => d.percentDepressed)]);
     
   //  add state labels
-  chartGroup.selectAll("text")
-                   .data(CensusData)
-                   .enter()
-                   .append('text')
-                   .attr("x", d => xScale(d.medianIncome))
-                   // adjust y down a bit for better visual
-                   .attr("y", d => yScale(d.percentDepressed) + 2)
-                   .attr("font-size", "12px")
-                   .attr("text-anchor", "middle")
-                   .attr("class","abbr")
-                   .text(d => d.stateAbbr)
-                   
+  // chartGroup.selectAll("text")
+  //                  .data(CensusData)
+  //                  .enter()
+  //                  .append('text')
+  //                  .attr("x", d => xScale(d.medianIncome))
+  //                  // adjust y down a bit for better visual
+  //                  .attr("y", d => yScale(d.percentDepressed) + 2)
+  //       .attr('depressed', d => d.percentDepressed + "%")
+  //       .attr('medianIncome', d => d.medianIncome)
+  //                  .attr("font-size", "12px")
+  //                  .attr("text-anchor", "middle")
+  //                  .attr("class","abbr")
+  //                  .text(d => d.stateAbbr)
     //  define axis functions
+
     let xAxis = d3.axisBottom(xScale);
     let yAxis = d3.axisLeft(yScale);
       //console.log("x axis: ", xAxis);
@@ -100,24 +99,26 @@ d3.csv('data/data.csv', function(err, CensusData){
       .append("circle")
       .attr("cx", d => xScale(d.medianIncome))
       .attr("cy", d => yScale(d.percentDepressed))
-      .attr("r", "10")
+      .attr("r", "15")
       .attr("fill", "green")
       .attr('opacity', "0.60")
-      
 
 
-    
 
   // Initialize tool tip
   // ==============================
   let toolTip = d3.tip()
-    //.attr("class", "tooltip")
-    .offset([80, -60])
+    .attr("class", "tooltip")
     .html(function(d){
     //console.log(d)
     return (`<div class=panel panel-primary>
     <div class="panel-heading">${d.states}</div>
-       <div class="panel-body">pop in poverty ${d.povertyPop}% </div>
+       <div class="panel-body">
+       <ul>
+       <li>pop in poverty ${d.povertyPop}%</li>
+       <li>median income ${d.medianIncome}</li>       
+       </ul>
+ </div>           
           </div>`)
   });
 
@@ -130,10 +131,14 @@ d3.csv('data/data.csv', function(err, CensusData){
   //  Create event listeners to display and hide the tooltip
   // ==============================
   circlesGroup.on("mouseover", function(d){
-    toolTip.show(d)
+      toolTip.show(d);
+      d3.select(this).attr('fill', 'orange')
+          .attr('opacity', '0.80');
   })
-  .on("mouseout", function(d){
-    toolTip.hide(d)
+ circlesGroup.on("mouseout", function(d){
+     toolTip.hide(d);
+     d3.select(this).attr("fill", "green")
+         .attr('opacity', "0.60");
   });
 
   
@@ -227,29 +232,28 @@ d3.selectAll(".x-axis-text").on('click', function(){
     let CurrentYaxis = d3.selectAll(".y-axis-text").filter(".active").attr('csv-column-name')
     console.log("current y axis status",CurrentYaxis)
 
+    // get current x axis
+    let CurrentXaxis = d3.selectAll(".x-axis-text").filter(".active").attr('csv-column-name')
+    console.log("current x axis status", CurrentXaxis)
+
 
     if (clickedSelection.classed('inactive')){
         //console.log(CensusData)
-        
         //console.log('current x scale', xScale)
         xScale.domain([
                       d3.min(CensusData, d => d[ClickedXaxis])
                       - d3.deviation(CensusData, d => d[ClickedXaxis]) / 2,
                       d3.max(CensusData, d => d[ClickedXaxis])
                       ]);
-          
-        //console.log("New X scale", xScale)
-        
+        console.log("New X scale", xScale)
         //  define axis functions
         let xAxis = d3.axisBottom(xScale);
-          
         // adjust x-axis
         svg.select(".x-axis")
             .transition()
             .duration(2000)
             .ease(d3.easeLinear)
             .call(xAxis)
-        
             d3.selectAll("circle")
             .transition()
             .duration(2000)
@@ -259,12 +263,10 @@ d3.selectAll(".x-axis-text").on('click', function(){
                 return xScale(d[ClickedXaxis]);
                 //return d[ClickedXaxis];
             })
-            
-          
             // adjust abbreviations
             d3.selectAll(".abbr")
             .transition()
-            .duration(1000)
+            .duration(2000)
             .ease(d3.easeLinear)
             .attr("x", function (d) {
                 return xScale(d[ClickedXaxis]);
