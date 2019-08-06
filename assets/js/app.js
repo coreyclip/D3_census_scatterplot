@@ -116,7 +116,11 @@ d3.csv('data/data.csv', function(err, CensusData){
        <div class="panel-body">
        <ul>
        <li>pop in poverty ${d.povertyPop}%</li>
-       <li>median income ${d.medianIncome}</li>       
+       <li>median income $ ${d.medianIncome}</li>       
+       <li>unemployment ${d.unemployment}%</li>       
+       <li>blindness ${d.blindness}%</li>       
+       <li>arthritis ${d.Arthritis}%</li>       
+       <li>healthcare unaffordable ${d.healthcare_unaffordable}%</li>       
        </ul>
  </div>           
           </div>`)
@@ -124,7 +128,6 @@ d3.csv('data/data.csv', function(err, CensusData){
 
 // Create tooltip in the chartGroup
 // ==============================
-  console.log("chartGroup line 112:", chartGroup);
  chartGroup.call(toolTip);
 
 
